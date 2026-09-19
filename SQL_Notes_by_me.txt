@@ -1,0 +1,40 @@
+Q. What is data ?
+It is nothing but meaning full information about data.
+
+Type of data:
+1. structure data: arrange in tabular format like in proper format ex. excelsheet or DB table(Relational DB)
+2. semi structure data: which is having some structure but not in proper format ex. Json format
+3. Unstructured data: which does not having any structured data like Big data ex. video, audio file, facebook feeds with images
+
+Type of database:
+a. Relational DB( SQL based database)
+b. No SQL DB (non relational database like video, audio files)
+
+
+Constraints means what kind of data we have to store in a column of table ex. employee_id can not be duplicate so for that we will use primary key
+
+
+
+Interview question:
+-------------------
+
+# Difference between Join & Set operator ?
+   Join: it append data horizental, means no. of column increase
+   Set operator: it append data vertically, means no. of row increase
+# employees who are assigned to atleast one project;
+# employee who are not assigned to any project:
+# find all employees who are earning more than avg salary in the company
+# find all employees who are earning more than avg salary in thier own department
+select * from employees e1 where e1.salary >
+(select avg(e2.salary) from employees e2 where e1.department_id = e2.department_id);
+# Find an employees who born on same year
+# Products order on same date from different supplier
+# Nth max salary
+# Delete and find duplicate record
+# Join concept
+# Union all
+# Write an SQL query to find the IDs of customers who have purchased wheat more than 10000 in total
+# To find the IDs of customers whose total purchase amount is more than 10000.
+# To retun the list of customers who have bought wheat but never bought rice.
+
+
