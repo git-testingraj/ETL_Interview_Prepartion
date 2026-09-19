@@ -1,0 +1,210 @@
+Basic SQL:
+
+Q1. Find the 5 most recent orders ?
+select top 5 * from orders
+order by order_date desc;
+limit 5
+
+Q2. Find all customers whose email is a Gmail address ?
+select * 
+from employees 
+where email_id like '%gmail.com';
+
+Q3. 
+select * from employees
+where status = 'Shipped' or status = 'delivered';
+
+select * from employees
+where status in ('shipped','delivered');
+
+
+select * from employees
+where date_diff(dd,order_Date,getdate())<=30;
+
+select * from employees
+order by department_id asc, salary desc;
+
+
+ Q4. List every customer and their order id if they have one ?
+Select C.customer_name, o.order_id
+from customers c left join orders o
+on c.order_id = o.order_id;
+
+Q5. Find customers who have never placed an order.
+select C.name
+from customers c left join orders o
+on c.customer_id = o.customer_id
+where o.customer_id is NULL;
+
+Q6. Find pairs of customer is a same class?
+select 
+from Customers c join Customers e1
+on c.name = e1.name and c.id <> e1.id;
+
+Q7. A company wants faster search performance on employee_id column. what will be your approach ?
+Create INDEX Idx_employee_id
+on employees(employee_id);
+
+--Medium SQL Query
+
+Q1. WAQ to find employees who earn more than then average salary of their department?
+way1:
+select first_name
+from employees e1
+where salary >(
+select avg(salary)
+from employees e2
+where e1.department_id = e2.department_id
+);
+
+way2:
+select first_name,salary
+from employees e join 
+(select department_id, avg(Salary) as sal
+from employees 
+group by department_id) d
+on e.department_id = d.department_id
+where e.salary > d.sal;
+
+Q2. Find the top 3 highest paid employees in each department ?
+
+select  from
+(select *,dense_Rank()over(partition by department order by salary desc) as high_paid
+from employees)temp
+where high_paid <= 3;
+
+Q3. Find the total number of orders placed by each customer ?
+SELECT Customer_id, count(*) as count_order
+from orders
+group by customer_id
+
+Q4. Find the average order amount by each customer ?
+SELECT customer_id, avg(order_amount) as avg_amt
+from orders
+group by customer_id
+
+Q5. Find customers who have placed more than 5 orders ?
+SELECT Customer_id, count(*) as count_order
+from orders
+group by customer_id
+having count(*)>5;
+
+Q6. WAQ to find total revenue generate by each month ?
+SELECT datepart(mm,hire_date) as month, sum(order_amount) as total_reven
+from customers
+group by datepart(mm,hire_Date);
+
+Q7. Find the most recent order date for each customer ?
+WAY1
+select * from
+(
+SELECT *,dense_rank()over(partition by customer_id order by order_date desc) as order
+from orders) temp
+where order = 1;
+
+WAY2:
+SELECT customer_id, max(order_Date) as max_order
+from customers
+group by customer_id ;
+
+Q8. List all products that are out of stock ?
+SELECT Product_id, product_name
+from products
+where stoch_quantity = 0;
+
+Q9. Find the top 5 best selling products ?
+SELECT top 5 product_name ,sum(quantity) as s 
+from products
+group by product_name
+order by s desc
+
+Q10. Find the total quantity sold of each product in each month ?
+SELECT product_id, datepart(mm,order_date), sum(quantity) as s
+from order_items
+group by product_id, datepart(mm,order_date);
+
+Q11. Find products that have never been ordered
+SELECT P.product_name
+from products p left join order_items o
+on p.product_id = o.product_id
+where o.product_id is NULL;
+
+Q12. Find the category that has the highest total sales ?
+SELECT top 1 c.category_id, c.category_name, sum(quantity * unit_price) total_sale
+from products P join order_item O
+on P.product_id = O.product_id
+join category C
+on O.category_id = C.category_id
+order by total_sale desc;
+
+Q13. List of employees who joined in the same month as their manager?
+SELECT e.first_name, m.first_name
+from employees e join employees m
+on e.manager_id = m.employee_id
+and datepart(mm,e.hire_date) = datepart(mm,m.hire_date);
+
+Q14. Find the department where average salary is greater then the company average salary ?
+
+SELECT department_id, avg(salary)
+from employees
+group by department_id
+having avg(salary) >(select avg(salary) from employees);
+
+
+SELECT c.customer_id, c.customer_name
+ from customers c
+WHERE NOT EXISTS (
+	SELECT category_id from categories
+	EXCEPT
+	SELECT DISTINCT p.category_id
+	from orders o join products p
+	on o.product_id = p.product_id
+	);
+
+Q16. Calculate the total revenue per product?
+SELECT product_name, sum(quantity*price) as total
+from sales
+group by product_name;
+
+Q17. Customers who made purchases but never returned products (Walmart) ?
+SELECT c.customer_id
+from customers c join orders o
+on c.customer_id = o.customer_id
+where c.customer_id not in 
+(SELECT customer_id from returnes);
+
+Q18. Get the latest order placed by each customers (Uber) ?
+SELECT customer_id, max(order_Date) as order_place
+from orders
+group by customer_id;
+
+Q19. Find products that were never sold ?
+SELECT p.product_name
+from products p join sales s
+on p.product_id = s.product_id
+where s.product_id is null;
+
+Q20. Identify the most Selling products (Adobe/Walmart) ?
+SELECT top 1 product_name, sum(quantity) as top_sale
+from sales
+group by product_name
+order by top_sale desc;
+
+Q21. WAQ to find customers who have placed more than 5 orders in the last 30 days
+Select customer_id, count(order_id) as c
+from orders
+where datediff(dd,order_date,getdate()) <=30
+group by customer_id
+having count(order_id) > 5;
+
+where order_date >=NOW()-INTERVAL 30 DAY;
+
+Q22. A company wants to find employees who have the same salary as another employee but belong to a different department ?
+SELECT e.first_name
+from employees e join employees e1
+on e. department_id <> e1.department_id
+and e.salary = e1.salary
+where e.employee_id <> e1.employee_id
+
+
+
