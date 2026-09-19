@@ -206,5 +206,6 @@ on e. department_id <> e1.department_id
 and e.salary = e1.salary
 where e.employee_id <> e1.employee_id
 
+Q23. Calculate a 3 day rolling sum of sales for each day ?
 
 
